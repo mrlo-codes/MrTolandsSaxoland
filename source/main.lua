@@ -11,6 +11,7 @@ local font = gfx.font.new('font/Mini Sans 2X')
 local text = 0
 
 local sound = playdate.sound
+local buttonDown = false
 
 -- ! game states
 
@@ -60,25 +61,42 @@ end
 
 function playdate.update()
 	if gameState == kGameInitialState then
-		print("ready")
-		
 		spritelib.update()
+		gfx.drawText("Press A/B to Play!", 75, 200, font)
 	end
 
 end
 
 function playdate.AButtonDown()	
-    gameState = kGameGetReadyState
-	gfx.clear()
-    text += 1
-    gfx.drawText(text, 200, 100, font)
+	if gameState == kGameInitialState then
+    	gameState = kGameGetReadyState
+		gfx.clear()
+    	text += 1
+    	gfx.drawText(text, 200, 100, font)
+	end
+
+	buttonDown = true
+
 end
 
 function playdate.BButtonDown()	
-	gameState = kGameGetReadyState
-    gfx.clear()
-    text -= 1 
-    gfx.drawText(text, 200, 100, font)
+	if gameState == kGameInitialState then
+		gameState = kGameGetReadyState
+    	gfx.clear()
+    	text -= 1 
+    	gfx.drawText(text, 200, 100, font)
+	end
+
+	buttonDown = true
+
+end
+
+function playdate.AButtonUp()
+	buttonDown = false
+end
+
+function playdate.BButtonUp()
+	buttonDown = false
 end
 
 --[[
