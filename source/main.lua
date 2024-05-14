@@ -1,9 +1,11 @@
 import "CoreLibs/sprites"
 import "CoreLibs/graphics"
+--import "CoreLibs/object"
+import "Note/note"
 
 
 local gfx <const> = playdate.graphics
-local spritelib = gfx.sprite
+local sprite = gfx.sprite
 local screenWidth = playdate.display.getWidth()
 local screenHeight = playdate.display.getHeight()
 
@@ -18,7 +20,7 @@ local buttonDown = false
 local kGameState = {initial, ready, playing, paused, over}
 local currentState = kGameState.initial
 
-local kGameInitialState, kGameGetReadyState, kGamePlayingState, kGamePausedState, kGameOverState = 0, 1, 2, 3, 4
+local kGameInitialState, kGamePlayingState, kGamePausedState, kGameOverState = 0, 1, 2, 3
 local gameState = kGameInitialState
 
 
@@ -30,11 +32,13 @@ titleSprite:moveTo(screenWidth / 2, screenHeight / 2)
 titleSprite:addSprite()
 ]]--
 local tolandTitleSprite = gfx.sprite.new(gfx.image.new('images/Toland_G_Smol'))
-tolandTitleSprite:moveTo((screenWidth / 2) + 60, (screenHeight / 2) + 35)
+tolandTitleSprite:moveTo(-100, (screenHeight / 2) + 35) -- (screenWidth / 2) + 60, (screenHeight / 2) + 35
 tolandTitleSprite:add()
 
 local titleSprite1 = gfx.sprite.new(gfx.image.new('images/title1'))
 local titleSprite2 = gfx.sprite.new(gfx.image.new('images/title2'))
+local notes = {}
+local frames = 0
 titleSprite1:moveTo(150, 50)
 titleSprite2:moveTo(150, 80)
 titleSprite1:setScale(0.25)
@@ -58,18 +62,41 @@ local function loadGame()
 	
 end
 
+local function playGame()
+	if(math.random(0, 100) > 50 and frames % 30 == 0) then
+		table.insert(notes, Note(10, 10))
+		print("hi")
+		--print(table.concat(notes, ", "))
+	end
+
+	for n in notes do
+		n:update()
+		n:draw()
+	end
+
+
+end
+
 
 function playdate.update()
 	if gameState == kGameInitialState then
-		spritelib.update()
-		gfx.drawText("Press A/B to Play!", 75, 200, font)
+		if tolandTitleSprite.x < (screenWidth / 2) + 60 then
+			tolandTitleSprite:moveTo(tolandTitleSprite.x + 10, tolandTitleSprite.y)
+			sprite.update()
+		else
+			gfx.drawText("Press A/B to Play!", 75, 200, font)
+		end
+	elseif (gameState == kGamePlayingState) then
+		playdate.drawFPS(0,0) -- FPS widget
+		playGame()
+		frames+=1
 	end
 
 end
 
 function playdate.AButtonDown()	
 	if gameState == kGameInitialState then
-    	gameState = kGameGetReadyState
+    	gameState = kGamePlayingState
 		gfx.clear()
     	text += 1
     	gfx.drawText(text, 200, 100, font)
@@ -81,7 +108,7 @@ end
 
 function playdate.BButtonDown()	
 	if gameState == kGameInitialState then
-		gameState = kGameGetReadyState
+		gameState = kGamePlayingState
     	gfx.clear()
     	text -= 1 
     	gfx.drawText(text, 200, 100, font)
