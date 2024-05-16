@@ -2,6 +2,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/graphics"
 --import "CoreLibs/object"
 import "Note/note"
+import "Staff/staff"
 
 
 local gfx <const> = playdate.graphics
@@ -38,6 +39,7 @@ tolandTitleSprite:add()
 local titleSprite1 = gfx.sprite.new(gfx.image.new('images/title1'))
 local titleSprite2 = gfx.sprite.new(gfx.image.new('images/title2'))
 local notes = {}
+local staff = Staff()
 local frames = 0
 titleSprite1:moveTo(150, 50)
 titleSprite2:moveTo(150, 80)
@@ -63,13 +65,20 @@ local function loadGame()
 end
 
 local function playGame()
+	gfx.clear()
+	staff:draw()
+	gfx.drawCircleAtPoint(100, 100, 10)
+	gfx.setColor(gfx.kColorWhite)
+	gfx.fillCircleAtPoint(100, 100, 9)
+	gfx.setColor(gfx.kColorBlack)
 	if(math.random(0, 100) > 50 and frames % 30 == 0) then
 		table.insert(notes, Note(10, 10))
-		print("hi")
-		--print(table.concat(notes, ", "))
+		--print("Note added")
+		print(notes[#notes]:status())
+		print("There are ".. #notes.. " notes now.")
 	end
 
-	for n in notes do
+	for i, n in ipairs(notes) do
 		n:update()
 		n:draw()
 	end

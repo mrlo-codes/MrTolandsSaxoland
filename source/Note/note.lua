@@ -11,11 +11,11 @@ class("Note").extends()
 function Note:init(xspeed, yspeed)
     self.label = {
 		x = 420,
-		y = playdate.display.getHeight() / 2,
+		y = 90 + (math.random(0, 8) * 10), 
 		xspeed = xspeed,
 		yspeed = yspeed,
-		width = 100,
-		height = 100
+		width = 15,
+		height = 15
 	}
 end
 --[[
@@ -31,7 +31,7 @@ end
 ]]--
 
 function Note:update()
-    local label = self.label;
+    local label = self.label
 
 
 	label.x -= label.xspeed
@@ -39,7 +39,14 @@ function Note:update()
 
 end
 
+function Note:status()
+	local label = self.label
+	return ("X: "..label.x.. " Y: ".. label.y)
+
+end
+
 function Note:draw()
-    local label = self.label;
+    local label = self.label
+	gfx.setLineWidth(2)
     gfx.drawRect(label.x, label.y, label.width, label.height)
 end
