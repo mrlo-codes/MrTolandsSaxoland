@@ -12,6 +12,8 @@ local screenHeight = playdate.display.getHeight()
 
 local font = gfx.font.new('font/Mini Sans 2X')
 local text = 0
+local cursorY = 100
+local speed = 25
 
 local sound = playdate.sound
 local buttonDown = false
@@ -67,20 +69,26 @@ end
 local function playGame()
 	gfx.clear()
 	staff:draw()
-	gfx.drawCircleAtPoint(100, 100, 10)
+	gfx.drawCircleAtPoint(100, cursorY, 10)
 	gfx.setColor(gfx.kColorWhite)
-	gfx.fillCircleAtPoint(100, 100, 9)
+	gfx.fillCircleAtPoint(100, cursorY, 9)
 	gfx.setColor(gfx.kColorBlack)
 	if(math.random(0, 100) > 50 and frames % 30 == 0) then
-		table.insert(notes, Note(10, 10))
+		table.insert(notes, Note(speed, speed))
 		--print("Note added")
 		print(notes[#notes]:status())
 		print("There are ".. #notes.. " notes now.")
 	end
 
 	for i, n in ipairs(notes) do
+		if(n~=nil) then
+			if(n:getXSpeed() ~= speed) then
+				n:changeSpeed(speed)
+			end
+		end
 		n:update()
 		n:draw()
+
 	end
 
 
@@ -107,24 +115,54 @@ function playdate.AButtonDown()
 	if gameState == kGameInitialState then
     	gameState = kGamePlayingState
 		gfx.clear()
-    	text += 1
-    	gfx.drawText(text, 200, 100, font)
 	end
 
 	buttonDown = true
 
 end
 
-function playdate.BButtonDown()	
+function playdate.BButtonDown()
 	if gameState == kGameInitialState then
 		gameState = kGamePlayingState
     	gfx.clear()
-    	text -= 1 
-    	gfx.drawText(text, 200, 100, font)
+	elseif gameState == kGamePlayingState then
+		for i, n in ipairs(notes) do
+			print("current speed: "..speed.." object speed: "..n:getXSpeed())
+		end
+
 	end
 
 	buttonDown = true
 
+end
+
+function playdate.downButtonDown()
+	
+	if gameState == kGamePlayingState and cursorY < 180 then
+		cursorY+=10
+	end
+	buttonDown = true
+end
+
+function playdate.upButtonDown()
+	if gameState == kGamePlayingState and cursorY > 100 then
+		cursorY-=10
+	end
+	buttonDown = true
+end
+
+function playdate.leftButtonDown()
+	if gameState == kGamePlayingState and speed < 50 then
+		speed += 5
+	end
+	buttonDown = true
+end
+
+function playdate.rightButtonDown()
+	if gameState == kGamePlayingState and speed > 5 then
+		speed -= 5
+	end
+	buttonDown = true
 end
 
 function playdate.AButtonUp()
@@ -134,6 +172,23 @@ end
 function playdate.BButtonUp()
 	buttonDown = false
 end
+
+function playdate.downButtonUp()
+	buttonDown = false
+end
+
+function playdate.upButtonUp()
+	buttonDown = false
+end
+
+function playdate.leftButtonUp()
+	buttonDown = false
+end
+
+function playdate.rightButtonUp()
+	buttonDown = false
+end
+
 
 --[[
 local function updateGame()
