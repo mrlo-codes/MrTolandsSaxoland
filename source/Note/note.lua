@@ -57,9 +57,24 @@ function Note:changeSpeed(newXSpeed, newYSpeed)
 	label.yspeed = newYSpeed
 end
 
+function Note:changeX(newX)
+	local label = self.label
+	label.x = newX
+end
+
 function Note:getXSpeed()
 	local label = self.label
 	return label.xspeed
+end
+
+function Note:getXPos()
+	local label = self.label
+	return label.x
+end
+
+function Note:getYPos()
+	local label = self.label
+	return label.y
 end
 
 function Note:getYSpeed()

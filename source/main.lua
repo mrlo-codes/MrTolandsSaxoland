@@ -11,9 +11,14 @@ local screenWidth = playdate.display.getWidth()
 local screenHeight = playdate.display.getHeight()
 
 local font = gfx.font.new('font/Mini Sans 2X')
-local text = 0
+local text
+local score = 0
 local cursorY = 100
 local speed = 25
+local notes = {}
+local collided = {}
+local staff = Staff()
+local frames = 0
 
 local sound = playdate.sound
 local buttonDown = false
@@ -40,9 +45,7 @@ tolandTitleSprite:add()
 
 local titleSprite1 = gfx.sprite.new(gfx.image.new('images/title1'))
 local titleSprite2 = gfx.sprite.new(gfx.image.new('images/title2'))
-local notes = {}
-local staff = Staff()
-local frames = 0
+
 titleSprite1:moveTo(150, 50)
 titleSprite2:moveTo(150, 80)
 titleSprite1:setScale(0.25)
@@ -75,7 +78,6 @@ local function playGame()
 	gfx.setColor(gfx.kColorBlack)
 	if(math.random(0, 100) > 50 and frames % 30 == 0) then
 		table.insert(notes, Note(speed, speed))
-		--print("Note added")
 		print(notes[#notes]:status())
 		print("There are ".. #notes.. " notes now.")
 	end
@@ -88,9 +90,37 @@ local function playGame()
 		end
 		n:update()
 		n:draw()
-
+		
 	end
 
+
+end
+
+local function checkCollisions()
+	collided = {}
+
+	for i, n in ipairs(notes) do
+		if(n~=nil) then
+			if(n:getXPos() <= 120) then
+				if(math.abs(100 - n:getXPos()) < 20) then
+					table.insert(collided, n)
+				elseif (n:getXPos() < 95) then
+					n:changeX(-10)
+					table.insert(collided, n)
+				end
+			end
+		end
+	end
+end
+
+local function printCollisions()
+	local result = "{"
+	for i, n in ipairs(collided) do
+		result = result.."Note #: "..i.." at ("..n:getXPos()..", "..n:getYPos().."), "
+	end
+
+	result = result.."}"
+	print(result)
 
 end
 
@@ -104,9 +134,12 @@ function playdate.update()
 			gfx.drawText("Press A/B to Play!", 75, 200, font)
 		end
 	elseif (gameState == kGamePlayingState) then
-		playdate.drawFPS(0,0) -- FPS widget
 		playGame()
+		playdate.drawFPS(0,0) -- FPS widget
+
 		frames+=1
+		gfx.drawText(text, 50, 40)
+		gfx.drawText(score, 50, 60)
 	end
 
 end
@@ -115,6 +148,32 @@ function playdate.AButtonDown()
 	if gameState == kGameInitialState then
     	gameState = kGamePlayingState
 		gfx.clear()
+		text = "Align cursor and hit the A button!"
+	elseif gameState == kGamePlayingState then
+		text=""
+		checkCollisions()
+		--printTable(collided)
+		printCollisions()
+		if(collided ~= nil) then
+			for i, n in ipairs(collided) do
+				local diffY = math.abs((n:getYPos()+10) - cursorY)
+				local diffX = math.abs(100 - (n:getXPos()))
+				if(diffY < 5 and diffX < 5) then
+					text = "Perfect!"
+					score += 30
+				elseif (diffY < 10 and diffX < 10) then
+					text = "Good"
+					score += 15
+				elseif (diffY < 15 and diffX < 15) then
+					text = "Poor"
+					score += 5
+				else 
+					text = "Missed!"
+					score -= 10
+				end
+			end
+			
+		end
 	end
 
 	buttonDown = true
@@ -126,9 +185,12 @@ function playdate.BButtonDown()
 		gameState = kGamePlayingState
     	gfx.clear()
 	elseif gameState == kGamePlayingState then
-		for i, n in ipairs(notes) do
+		--[[for i, n in ipairs(notes) do
 			print("current speed: "..speed.." object speed: "..n:getXSpeed())
-		end
+		end]]--
+		--checkCollisions()
+		--printTable(collided)
+		--printCollisions()
 
 	end
 
