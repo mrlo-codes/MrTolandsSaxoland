@@ -81,13 +81,22 @@ local function playGame()
 		print(notes[#notes]:status())
 		print("There are ".. #notes.. " notes now.")
 	end
+	
 
 	for i, n in ipairs(notes) do
 		if(n~=nil) then
-			if(n:getXSpeed() ~= speed) then
-				n:changeSpeed(speed)
+			if(n:getDeathFlag() ~= false) then
+				if(n:getXSpeed() ~= speed) then
+					n:changeSpeed(speed)
+				end
+			elseif (n:getX() <= 85) then
+				print("Set to die")
+				collided[i] = nil
+				text = "MISSED!"
+				score -= 10
 			end
 		end
+
 		n:update()
 		n:draw()
 		
@@ -104,8 +113,8 @@ local function checkCollisions()
 			if(n:getXPos() <= 120) then
 				if(math.abs(100 - n:getXPos()) < 20) then
 					table.insert(collided, n)
-				elseif (n:getXPos() < 95) then
-					n:changeX(-10)
+				elseif (n:getXPos() <= 85) then
+					n:setDeathFlag(true)
 					table.insert(collided, n)
 				end
 			end
@@ -171,9 +180,11 @@ function playdate.AButtonDown()
 					text = "Missed!"
 					score -= 10
 				end
+				
+				
 			end
-			
 		end
+			
 	end
 
 	buttonDown = true

@@ -15,7 +15,8 @@ function Note:init(xspeed, yspeed)
 		xspeed = xspeed,
 		yspeed = yspeed,
 		width = 20,
-		height = 20
+		height = 20,
+		deathFlag = false
 	}
 end
 --[[
@@ -80,4 +81,14 @@ end
 function Note:getYSpeed()
 	local label = self.label
 	return label.yspeed
+end
+
+function Note:getDeathFlag()
+	local label = self.label
+	return label.deathFlag
+end
+
+function Note:setDeathFlag(flag)
+	local label = self.label
+	label.deathFlag = flag
 end
