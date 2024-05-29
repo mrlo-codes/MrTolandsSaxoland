@@ -104,11 +104,10 @@ local function playGame()
 
 	for i, n in ipairs(notes) do
 
-		if(n:getDeathFlag() ~= false) then
-			if(n:getXSpeed() ~= speed) then
-				n:changeSpeed(speed)
-			end
-		elseif (n:getXPos() <= 85) then
+		if(n:getXSpeed() ~= speed) then
+			n:changeSpeed(speed)
+		end
+		if (n:getXPos() <= 85) then
 			n:setDeathFlag(true)
 			text = "MISSED!"
 			score -= 10
