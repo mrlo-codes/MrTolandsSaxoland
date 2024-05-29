@@ -69,42 +69,6 @@ local function loadGame()
 	
 end
 
-local function playGame()
-	gfx.clear()
-	staff:draw()
-	gfx.drawCircleAtPoint(100, cursorY, 10)
-	gfx.setColor(gfx.kColorWhite)
-	gfx.fillCircleAtPoint(100, cursorY, 9)
-	gfx.setColor(gfx.kColorBlack)
-	if(math.random(0, 100) > 50 and frames % 30 == 0) then
-		table.insert(notes, Note(speed, speed))
-		print(notes[#notes]:status())
-		print("There are ".. #notes.. " notes now.")
-	end
-	
-
-	for i, n in ipairs(notes) do
-		if(n~=nil) then
-			if(n:getDeathFlag() ~= false) then
-				if(n:getXSpeed() ~= speed) then
-					n:changeSpeed(speed)
-				end
-			elseif (n:getX() <= 85) then
-				print("Set to die")
-				collided[i] = nil
-				text = "MISSED!"
-				score -= 10
-			end
-		end
-
-		n:update()
-		n:draw()
-		
-	end
-
-
-end
-
 local function ArrayRemove(t, fnKeep)
     local j, n = 1, #t;
 
@@ -122,6 +86,49 @@ local function ArrayRemove(t, fnKeep)
     end
 
     return t;
+end
+
+local function playGame()
+	gfx.clear()
+	staff:draw()
+	gfx.drawCircleAtPoint(100, cursorY, 10)
+	gfx.setColor(gfx.kColorWhite)
+	gfx.fillCircleAtPoint(100, cursorY, 9)
+	gfx.setColor(gfx.kColorBlack)
+	if(math.random(0, 100) > 50 and frames % 30 == 0) then
+		table.insert(notes, Note(speed, speed))
+		print(notes[#notes]:status())
+		print("There are ".. #notes.. " notes now.")
+	end
+	
+
+	for i, n in ipairs(notes) do
+
+		if(n:getDeathFlag() ~= false) then
+			if(n:getXSpeed() ~= speed) then
+				n:changeSpeed(speed)
+			end
+		elseif (n:getXPos() <= 85) then
+			n:setDeathFlag(true)
+			text = "MISSED!"
+			score -= 10
+		end
+		
+		n:update()
+		n:draw()
+
+		
+	end
+
+	--Remove all notes with death flags
+	ArrayRemove(notes, function(t, i, j)
+		local v = t[i]
+		return v:getDeathFlag()~=true
+	end)
+	
+		
+
+
 end
 
 local function checkCollisions()
@@ -178,7 +185,6 @@ function playdate.AButtonDown()
 		gfx.clear()
 		text = "Align cursor and hit the A button!"
 	elseif gameState == kGamePlayingState then
-		text=""
 		checkCollisions()
 		--printTable(collided)
 		printCollisions()
@@ -186,18 +192,22 @@ function playdate.AButtonDown()
 			for i, n in ipairs(collided) do
 				local diffY = math.abs((n:getYPos()+10) - cursorY)
 				local diffX = math.abs(100 - (n:getXPos()))
-				if(diffY < 5 and diffX < 5) then
+				if(diffY < 10 and diffX < 7) then
 					text = "Perfect!"
 					score += 30
-				elseif (diffY < 10 and diffX < 10) then
+					n:setDeathFlag(true)
+				elseif (diffY < 10 and diffX < 11) then
 					text = "Good"
 					score += 15
+					n:setDeathFlag(true)
 				elseif (diffY < 15 and diffX < 15) then
 					text = "Poor"
 					score += 5
+					n:setDeathFlag(true)
 				else 
-					text = "Missed!"
+					text = "Miss..."
 					score -= 10
+					n:setDeathFlag(true)
 				end
 				
 				

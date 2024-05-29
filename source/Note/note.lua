@@ -58,6 +58,8 @@ function Note:changeSpeed(newXSpeed, newYSpeed)
 	label.yspeed = newYSpeed
 end
 
+
+
 function Note:changeX(newX)
 	local label = self.label
 	label.x = newX
