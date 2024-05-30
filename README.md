@@ -5,8 +5,7 @@
    Ever since Mr. Toland got a Playdate for his birthday, he expressed interest in coding a game for his Playdate and asked me to show him the ropes.
    Interested in the Playdate SDK and not having forayed *much* into Lua **(also forgetting to get a gift for his birthday)**, I started dabbling in the code to learn it myself.
    Then, I had a great idea to make a small proof of concept rhythm game for him as a secret birthday present.
-   Now, not so secret anymore *(hence why this repository is public now)*.
-    This should be done only once, you need to restart VSCode after this.  
+   Now, not so secret anymore *(hence why this repository is public now)*. 
 
 
 
