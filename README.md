@@ -1,3 +1,6 @@
+<img width="402" alt="image" src="https://github.com/mrlo-codes/MrTolandsSaxoland/assets/55058939/09a693b8-2f79-4bfe-b8a0-05b4e454062f">
+
+
 # Motivation:  
    Ever since Mr. Toland got a Playdate for his birthday, he expressed interest in coding a game for his Playdate and asked me to show him the ropes.
    Interested in the Playdate SDK and not having forayed into Lua (also forgetting to get a gift for his birthday), I started dabbling in the code to learn it myself.
