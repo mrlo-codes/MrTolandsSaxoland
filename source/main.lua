@@ -19,6 +19,8 @@ local notes = {}
 local collided = {}
 local staff = Staff()
 local frames = 0
+local crankPos, crankChange, crankAcc = playdate.getCrankPosition(), playdate.getCrankChange()
+local crankOpen = false
 
 local sound = playdate.sound
 local buttonDown = false
@@ -246,14 +248,14 @@ function playdate.downButtonDown()
 end
 
 function playdate.upButtonDown()
-	if gameState == kGamePlayingState and cursorY > 100 then
+	if gameState == kGamePlayingState and cursorY > 100 and crankOpen == false then
 		cursorY-=10
 	end
 	buttonDown = true
 end
 
 function playdate.leftButtonDown()
-	if gameState == kGamePlayingState and speed < 50 then
+	if gameState == kGamePlayingState and speed < 50 and crankOpen == false then
 		speed += 5
 	end
 	buttonDown = true
@@ -288,6 +290,14 @@ end
 
 function playdate.rightButtonUp()
 	buttonDown = false
+end
+
+function playdate.crankUndocked()
+	crankOpen = true
+end
+
+function playdate.crankDocked()
+	crankOpen = false
 end
 
 
